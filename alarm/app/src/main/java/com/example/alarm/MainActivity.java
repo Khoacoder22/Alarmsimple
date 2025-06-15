@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
 
-        // Check and request permission for exact alarms on Android 12 and above
+        // Check and request permission for exact alarms 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !getSystemService(AlarmManager.class).canScheduleExactAlarms()) {
             Intent intent = new Intent(android.provider.Settings.ACTION_REQUEST_SCHEDULE_EXACT_ALARM);
             startActivity(intent);
@@ -91,6 +91,7 @@ public class MainActivity extends AppCompatActivity {
                 .apply();
     }
 
+    // Cancel Alarm by User
     private void cancelAlarm() {
         Intent intent = new Intent(this, AlarmBroadcastReceiver.class);
         PendingIntent pendingIntent = PendingIntent.getBroadcast(this, alarmIdentifier, intent, PendingIntent.FLAG_IMMUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
@@ -98,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
         AlarmManager alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         alarmManager.cancel(pendingIntent);
 
-        // Clear saved alarm time from SharedPreferences
+        // Clear saved alarm 
         getSharedPreferences(getPackageName() + "AlarmOpenSourceApp", MODE_PRIVATE)
                 .edit()
                 .remove("alarmTime" + alarmIdentifier)
@@ -136,10 +137,7 @@ public class MainActivity extends AppCompatActivity {
         return sdf.format(calendar.getTime());
     }
 
-
-
     // Just for tickering the time.
-
     private final Handler handler = new Handler();
     private final Runnable ticker = new Runnable() {
         @Override
@@ -147,8 +145,6 @@ public class MainActivity extends AppCompatActivity {
             // Update the current time text view
             Calendar currentTime = Calendar.getInstance();
             updateCurrentTimeTextView(currentTime);
-
-            // Post the ticker to run again after a delay of 1000ms (1 second)
             handler.postDelayed(this, 1000);
         }
     };
@@ -156,14 +152,12 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        // Start the ticker when the activity comes into the foreground
         ticker.run();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        // Stop the ticker when the activity goes into the background
         handler.removeCallbacks(ticker);
     }
 }
