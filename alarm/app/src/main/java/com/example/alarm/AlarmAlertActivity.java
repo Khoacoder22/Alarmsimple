@@ -53,11 +53,17 @@ public class AlarmAlertActivity extends Activity {
             stopAlarmButton.setOnClickListener(v->stopAlarm());
 
             Button snoozeAlarmButton = findViewById(R.id.snoozeAlarmButton);
-            snoozeAlarmButton.setOnClickListener(v->snoozeAlarm()); // Lambada Expression for Java v8+
+            snoozeAlarmButton.setOnClickListener(v->snoozeAlarm()); 
             snoozeAlarmButton.setText("Snooze for "+SNOOZE_TIME+" sec");
 
         } catch (Exception e) {
-            e.printStackTrace(); // Log or handle the exception as needed
+            e.printStackTrace(); 
+        }
+    }
+
+    private void stopVibration(){
+        if (vibrator != null) {
+            vibrator.cancel(); 
         }
     }
 
@@ -66,32 +72,25 @@ public class AlarmAlertActivity extends Activity {
             vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
             // Check if the device has a vibrator
             if (vibrator != null && vibrator.hasVibrator()) {
-                long[] vibrationPattern = {0, 500, 500, 500}; // Example pattern: wait 0ms, vibrate 500ms, sleep 500ms
-                vibrator.vibrate(vibrationPattern, 0); // Start repeating from the first element
+                long[] vibrationPattern = {0, 500, 500, 500}; 
+                vibrator.vibrate(vibrationPattern, 0); 
             }else{
                 Log.d(TAG, "startVibration: Device has no vibrator");
             }
         }
     }
-
-    private void stopVibration(){
-        if (vibrator != null) {
-            vibrator.cancel(); // Cancel the vibration
-        }
-    }
-
     private void playSound(){
 
         // Play the alarm sound
         mediaPlayer = MediaPlayer.create(this, Settings.System.DEFAULT_ALARM_ALERT_URI);
 
         mediaPlayer.setOnCompletionListener(mp -> {
-            PLAY_SOUND_COUNT--; // Decrement the play count
+            PLAY_SOUND_COUNT--; 
             if (PLAY_SOUND_COUNT > 0) {
-                mp.start(); // Restart the sound for the next loop
+                mp.start();
             } else {
-                stopVibration(); // Optionally stop vibration when playback finally completes
-                stopSound(); // Stop sound to release the sound
+                stopVibration(); 
+                stopSound(); 
             }
         });
 
@@ -115,14 +114,12 @@ public class AlarmAlertActivity extends Activity {
         // Turn the screen on when this activity launches
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_TURN_SCREEN_ON);
 
-        // Starting from Android 27 (Android 8.1, Oreo), the following flags are needed
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1) {
             setShowWhenLocked(true);
             setTurnScreenOn(true);
         }
 
-
-        // This is for the safety of battery draining, it ensure to hold the CPU awake for just acquired time.
+        // This is for the safety of battery draining
         PowerManager powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                 "AlarmApp::AlarmWakeLockTag");
@@ -149,12 +146,12 @@ public class AlarmAlertActivity extends Activity {
 
         // Calculate the snooze time
         Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.SECOND, SNOOZE_TIME); // Snooze Time in Seconds
+        calendar.add(Calendar.SECOND, SNOOZE_TIME); 
 
-        // Set the snooze alarm
+        // Set 
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), pendingIntent);
 
-        // Stop the current alarm
+        // Stop 
         stopAlarm();
     }
 
@@ -165,7 +162,6 @@ public class AlarmAlertActivity extends Activity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-
 
         // Stop the current alarm
         stopAlarm();
